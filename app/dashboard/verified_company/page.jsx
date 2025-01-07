@@ -10,13 +10,11 @@ export default function Home() {
   const [perPage, setPerPage] = useState('10');
   const [page, setPage] = useState('1');
   const [search, setSearch] = useState('');
-  const [is_approved, set_is_approved] = useState(false);
-  const [is_kyc_submitted, set_is_kyc_submitted] = useState(true);
   const [loading, setLoading] = useState(true); 
+  const [filter, setFilter] = useState('')
   const [showFilter, setShowFilter] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState()
-    const [filter, setFilter] = useState('')
 
 const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -25,22 +23,18 @@ const handlePageChange = (page) => {
 
   useEffect(() => {
     getUser();
-  }, [perPage, search, page]);
+  }, [perPage, search, page, filter]);
 
   const getUser = async () => {
     setLoading(true);  
-    //company/list/?entity_type=adf&company_type=df&is_approved=false&is_kyc_submitted=true&search=df&page=2&page_size=12
+
     try {
-      const response = await axiosInstance.get(`company/list/?is_approved=${is_approved}&is_kyc_submitted=${is_kyc_submitted}&search=${search}&page=${page}&page_size=${perPage}`);
+      const response = await axiosInstance.get(`company/list/?company_type=${filter}&is_approved=${'true'}&is_kyc_submitted=${'true'}&search=${search}&page=${page}&page_size=${perPage}`);
+      console.log(response.data)
       setUser(response.data.results);
-      console.log(response)
       setCurrentPage(response.data.current_page)
-      let total = Math.floor(response.data.count / perPage)
-      if(total === 1 ){
-        setTotalPages(total)
-      } else ( total = total + 1){
-        setTotalPages(total)
-      }      
+      let total = (Math.floor(response.data.count / perPage) + 1)
+      setTotalPages(total)
       
     } catch (error) {
       console.error('Error', error);
@@ -72,11 +66,10 @@ const handlePageChange = (page) => {
                 </button>
             </Link>
           </div>
-        <label className="text-[#1E1E1E] text-xl mx-4 mt-1 font-bold">Unverified Company</label>
+        <label className="text-[#1E1E1E] text-xl mx-4 mt-1 font-bold">Verified Company</label>
       </div>
       <div className="p-5 flex justify-between">
         <div className="flex gap-2">
-
           <div className="flex gap-3 text-[#4A5568] border px-4 py-2 rounded shadow">
             <label>Created At</label>
             <div className="mt-2">
@@ -93,8 +86,8 @@ const handlePageChange = (page) => {
             <label className="text-[#4A5568] cursor-pointer">Filter </label>
           </div>
           {showFilter && 
-          <div onClick = {() => setShowFilter(!showFilter)} className="absolute top-12 right-4 w-32 text-black bg-gray-50 rounded p-4 shadow">
-            <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick = {() => setFilter("Incorporation")}>Corporation</p>
+          <div onClick = {() => setShowFilter(!showFilter)} className="absolute top-12 right-4 w-32 text-black bg-gray-100 rounded p-4 shadow">
+           <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick = {() => setFilter("Incorporation")}>Corporation</p>
            <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick = {() => setFilter('organization')}>Organization</p>
           </div> }
         </div>
@@ -150,7 +143,7 @@ const handlePageChange = (page) => {
                     <th className="text-[#191D2380] text-left border py-2 px-4">PHONE NUMBER</th>
                     <th className="text-[#191D2380] text-left border py-2 px-4">ENTITY TYPE</th>
                     <th className="text-[#191D2380] text-left border py-2 px-4">CREATED AT</th>
-                    <th className="text-[#191D2380] text-center border py-2 px-4">OPERATION</th>
+                    {/* <th className="text-[#191D2380] text-center border py-2 px-4">OPERATION</th> */}
                   </tr>
                 </thead>
 
@@ -163,11 +156,11 @@ const handlePageChange = (page) => {
                         <td className="text-[#4A5568] text-left border py-2 px-4">{val.incorporation_number}</td>
                         <td className="text-[#4A5568] text-left border py-2 px-4">{val.entity_type}</td>
                         <td className="text-[#4A5568] text-left border py-2 px-4">{`2022`}</td>
-                        <td className="text-[#4A5568] border py-2">
+                        {/* <td className="text-[#4A5568] border py-2">
                         <Link href={`/dashboard/company_details/${val.id}`} className="flex justify-center">
                           <Image src='/details.png' alt = '' height={20} width={20} />
                         </Link>
-                      </td>
+                      </td> */}
                       </tr>
                   </tbody>
                 ))}
@@ -179,8 +172,7 @@ const handlePageChange = (page) => {
         </div>
          
       </div>
-      <div>
-         {loading ?
+        { loading ?
             ''
             :
             <div className="flex justify-end mx-5">
@@ -190,7 +182,6 @@ const handlePageChange = (page) => {
             handlePageChange={handlePageChange} 
             />
         </div>}
-      </div>
     </div>
   );
 }

@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
-import Select from 'react-select'
+
 
 export default function KycVerify(){
   const [options, setOptions] = useState([]);
@@ -14,7 +14,7 @@ export default function KycVerify(){
 
   useEffect(() => {
     getCompayEntityTypes();
-    getUser()
+
   }, []);
 
   const getCompayEntityTypes = async () => {
