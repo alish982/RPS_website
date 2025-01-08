@@ -7,7 +7,7 @@ import Pagination from "@/app/others/pagination/page";
 
 export default function Home() {
   const [user, setUser] = useState([]);
-  const [perPage, setPerPage] = useState('10');
+  const [perPage, setPerPage] = useState('20');
   const [page, setPage] = useState('1');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true); 
@@ -15,6 +15,7 @@ export default function Home() {
   const [showFilter, setShowFilter] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState()
+  const [totalData, setTotalData] = useState()
 
 const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -33,6 +34,7 @@ const handlePageChange = (page) => {
       console.log(response.data)
       setUser(response.data.results);
       setCurrentPage(response.data.current_page)
+      setTotalData(response.data.count)
       let total = (Math.floor(response.data.count / perPage) + 1)
       setTotalPages(total)
       
@@ -70,13 +72,6 @@ const handlePageChange = (page) => {
       </div>
       <div className="p-5 flex justify-between">
         <div className="flex gap-2">
-          <div className="flex gap-3 text-[#4A5568] border px-4 py-2 rounded shadow">
-            <label>Created At</label>
-            <div className="mt-2">
-              <Image src='/dropdown.svg' alt='' width={13} height={13} />
-            </div>
-          </div>
-
        </div>
         <div className="relative flex gap-2 cursor-pointer">
           <div onClick = {() => setShowFilter(!showFilter)} className="flex gap-2 text-[#4A5568] border px-4 py-2 rounded shadow ">
@@ -87,7 +82,7 @@ const handlePageChange = (page) => {
           </div>
           {showFilter && 
           <div onClick = {() => setShowFilter(!showFilter)} className="absolute top-12 right-4 w-32 text-black bg-gray-100 rounded p-4 shadow">
-           <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick = {() => setFilter("Incorporation")}>Corporation</p>
+           <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick = {() => setFilter("corporation")}>Corporation</p>
            <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick = {() => setFilter('organization')}>Organization</p>
           </div> }
         </div>
@@ -112,21 +107,21 @@ const handlePageChange = (page) => {
                   className="appearance-none bg-transparent border-none text-gray-700 focus:outline-none focus:ring-0 w-full"
                   onChange={(e) => setPerPage(Number(e.target.value))}
                 >
-                  <option value="10">10</option>
-                  <option value="15">15</option>
                   <option value="20">20</option>
                   <option value="30">30</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
                 </select>
                 <Image src='/dropdown.svg' alt='' height={10} width={10} />
               </div>
               <p>of</p>
               <div className="flex">
-                <p className="px-2">50</p>
+                <p className="px-2">{totalData}</p>
                 <p>results</p>
               </div>
             </div>
           </div>
-
+            {console.log(totalData)}
         
           {loading ? (
             <div className="flex justify-center items-center py-10">
@@ -140,10 +135,13 @@ const handlePageChange = (page) => {
                     <th className="text-[#191D2380] text-left border py-2 px-4">S.N.</th>
                     <th className="text-[#191D2380] text-left border py-2 px-4">ENTITY NAME</th>
                     <th className="text-[#191D2380] text-left border py-2 px-4">EMAIL</th>
-                    <th className="text-[#191D2380] text-left border py-2 px-4">PHONE NUMBER</th>
+                    <th className="text-[#191D2380] text-left border py-2 px-4">COMPANY TYPE</th>
+                    <th className="text-[#191D2380] text-left border py-2 px-4">INCORPORATION NUMBER</th>
                     <th className="text-[#191D2380] text-left border py-2 px-4">ENTITY TYPE</th>
                     <th className="text-[#191D2380] text-left border py-2 px-4">CREATED AT</th>
-                    {/* <th className="text-[#191D2380] text-center border py-2 px-4">OPERATION</th> */}
+                    <th className="text-[#191D2380] text-left border py-2 px-4">KYC APPROVED</th>
+                    <th className="text-[#191D2380] text-left border py-2 px-4">KYC UPDATED</th>
+                    <th className="text-[#191D2380] text-center border py-2 px-4">OPERATION</th>
                   </tr>
                 </thead>
 
@@ -153,14 +151,33 @@ const handlePageChange = (page) => {
                         <td className="text-[#4A5568] text-left border py-2 px-4">{index + 1}</td>
                         <td className="text-[#4A5568] font-bold text-left border py-2 px-4">{val.entity_name}</td>
                         <td className="text-[#4A5568] text-left border py-2 px-4">{val.email}</td>
+                        <td className="text-[#4A5568] text-left border py-2 px-4">{val.company_type}</td>
                         <td className="text-[#4A5568] text-left border py-2 px-4">{val.incorporation_number}</td>
                         <td className="text-[#4A5568] text-left border py-2 px-4">{val.entity_type}</td>
-                        <td className="text-[#4A5568] text-left border py-2 px-4">{`2022`}</td>
-                        {/* <td className="text-[#4A5568] border py-2">
+                        <td className="text-[#4A5568] text-left border py-2 px-4">{val.created_at.slice(0,10)}</td>
+                        <td className="text-[#4A5568] text-left border px-16 py-2">
+                         {val.is_kyc_submitted ? (
+                          <Image src="/statusTrue.svg" alt="" height={15} width={15} />
+                        ) : (
+                          <Image src="/statusFalse.svg" alt="" height={15} width={15} />
+                        )}
+                      </td>
+
+                      <td className="text-[#4A5568] border py-2 px-16">
+                        {val.is_approved ? (
+                          <Image src="/statusTrue.svg" alt="" height={15} width={15} />
+                        ) : (
+                          <Image src="/statusFalse.svg" alt="" height={15} width={15} />
+                        )}
+                        </td>
+                        <td className="text-[#4A5568] border py-2">
                         <Link href={`/dashboard/company_details/${val.id}`} className="flex justify-center">
-                          <Image src='/details.png' alt = '' height={20} width={20} />
+                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                          </svg>
                         </Link>
-                      </td> */}
+                      </td>
                       </tr>
                   </tbody>
                 ))}
@@ -172,7 +189,7 @@ const handlePageChange = (page) => {
         </div>
          
       </div>
-        { loading ?
+        { loading || user.length == 0 ?
             ''
             :
             <div className="flex justify-end mx-5">

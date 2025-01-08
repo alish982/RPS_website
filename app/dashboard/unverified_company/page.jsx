@@ -7,11 +7,11 @@ import Pagination from "@/app/others/pagination/page";
 
 export default function Home() {
   const [user, setUser] = useState([]);
-  const [perPage, setPerPage] = useState('10');
+  const [perPage, setPerPage] = useState('20');
   const [page, setPage] = useState('1');
   const [search, setSearch] = useState('');
   const [is_approved, set_is_approved] = useState(false);
-  const [is_kyc_submitted, set_is_kyc_submitted] = useState(true);
+  const [is_kyc_submitted, set_is_kyc_submitted] = useState();
   const [loading, setLoading] = useState(true); 
   const [showFilter, setShowFilter] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,15 +33,9 @@ const handlePageChange = (page) => {
     try {
       const response = await axiosInstance.get(`company/list/?is_approved=${is_approved}&is_kyc_submitted=${is_kyc_submitted}&search=${search}&page=${page}&page_size=${perPage}`);
       setUser(response.data.results);
-      console.log(response)
       setCurrentPage(response.data.current_page)
       let total = Math.floor(response.data.count / perPage)
-      if(total === 1 ){
-        setTotalPages(total)
-      } else ( total = total + 1){
-        setTotalPages(total)
-      }      
-      
+      total === 1 ? setTotalPages(total) : setTotalPages(total + 1)
     } catch (error) {
       console.error('Error', error);
     } finally {
@@ -119,10 +113,10 @@ const handlePageChange = (page) => {
                   className="appearance-none bg-transparent border-none text-gray-700 focus:outline-none focus:ring-0 w-full"
                   onChange={(e) => setPerPage(Number(e.target.value))}
                 >
-                  <option value="10">10</option>
-                  <option value="15">15</option>
                   <option value="20">20</option>
                   <option value="30">30</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
                 </select>
                 <Image src='/dropdown.svg' alt='' height={10} width={10} />
               </div>
@@ -147,9 +141,13 @@ const handlePageChange = (page) => {
                     <th className="text-[#191D2380] text-left border py-2 px-4">S.N.</th>
                     <th className="text-[#191D2380] text-left border py-2 px-4">ENTITY NAME</th>
                     <th className="text-[#191D2380] text-left border py-2 px-4">EMAIL</th>
-                    <th className="text-[#191D2380] text-left border py-2 px-4">PHONE NUMBER</th>
+                    <th className="text-[#191D2380] text-left border py-2 px-4">COMPANY TYPE</th>
+                    <th className="text-[#191D2380] text-left border py-2 px-4">INCORPORATION NUMBER</th>
                     <th className="text-[#191D2380] text-left border py-2 px-4">ENTITY TYPE</th>
+                    
                     <th className="text-[#191D2380] text-left border py-2 px-4">CREATED AT</th>
+                                  <th className="text-[#191D2380] text-left border py-2 px-4">KYC SUBMITTED</th>
+      
                     <th className="text-[#191D2380] text-center border py-2 px-4">OPERATION</th>
                   </tr>
                 </thead>
@@ -160,9 +158,19 @@ const handlePageChange = (page) => {
                         <td className="text-[#4A5568] text-left border py-2 px-4">{index + 1}</td>
                         <td className="text-[#4A5568] font-bold text-left border py-2 px-4">{val.entity_name}</td>
                         <td className="text-[#4A5568] text-left border py-2 px-4">{val.email}</td>
+                        <td className="text-[#4A5568] text-left border py-2 px-4">{val.company_type}</td>
                         <td className="text-[#4A5568] text-left border py-2 px-4">{val.incorporation_number}</td>
                         <td className="text-[#4A5568] text-left border py-2 px-4">{val.entity_type}</td>
-                        <td className="text-[#4A5568] text-left border py-2 px-4">{`2022`}</td>
+                        
+                        <td className="text-[#4A5568] text-left border py-2 px-4">{val.created_at.slice(0,10)}</td>
+                        <td className="text-[#4A5568] text-left border px-16 py-2">
+                         {val.is_kyc_submitted ? (
+                          <Image src="/statusTrue.svg" alt="" height={15} width={15} />
+                        ) : (
+                          <Image src="/statusFalse.svg" alt="" height={15} width={15} />
+                        )}
+                      </td>
+
                         <td className="text-[#4A5568] border py-2">
                         <Link href={`/dashboard/company_details/${val.id}`} className="flex justify-center">
                           <Image src='/details.png' alt = '' height={20} width={20} />
@@ -175,13 +183,12 @@ const handlePageChange = (page) => {
             </div>
             
           )}
-          
+   
         </div>
-         
       </div>
       <div>
-         {loading ?
-            ''
+         {loading || user.length == 0  ?
+            setTimeout(() => {<div className="text-black py-2 flex justify-center">Nothing to display !!</div>, 2000})
             :
             <div className="flex justify-end mx-5">
             <Pagination 
