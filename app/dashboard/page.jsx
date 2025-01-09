@@ -18,16 +18,17 @@ export default function Home() {
   const [filter, setFilter] = useState('');
   const [showFilter, setShowFilter] = useState(false);
   const [isApprovedPopUP, setIsApprovedPopUp] = useState(false);
+  const [kycStats, setKycStats] = useState([])
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
     setPage(page);
   };
 
-  console.log(filter)
 
   useEffect(() => {
     getUser();
+    getDataForDashboard();
   }, [perPage, search, page, filter, is_kyc_submitted, is_approved]);
 
   const getUser = async () => {
@@ -36,7 +37,6 @@ export default function Home() {
       const response = await axiosInstance.get(
         `company/list/?company_type=${filter}&is_approved=${is_approved}&is_kyc_submitted=${is_kyc_submitted}&search=${search}&page=${page}&page_size=${perPage}`
       );
-      console.log(response.data)
       setUser(response.data.results);
       setCurrentPage(response.data.current_page);
       let total = Math.floor(response.data.count / perPage) + 1;
@@ -48,51 +48,87 @@ export default function Home() {
     }
   };
 
+    const getDataForDashboard = async() => {
+          try {
+      const response = await axiosInstance.get(
+        `company/dashboard/kyc-stats`
+      );
+      setKycStats(response.data.data)
+      console.log(response.data.data)
+    } catch (error) {
+      console.error('Error', error);
+    } 
+    }
+    
   return (
     <div className="pl-[70px] pr-4 h-screen w-screen bg-white">
-      <div className="border p-5">
+      <div className="border p-5 flex justify-between">
         <label className="text-[#1E1E1E] text-xl mx-2 font-bold">Company</label>
+        <div className="text-black flex gap-5 bg-green-200 px-4 py-1 rounded font-bold ">
+          <label>Verified Kyc: {kycStats.total_approved_kyc ? kycStats.total_approved_kyc : '-'}</label>
+          <label>Unverified Kyc: {kycStats.total_unapproved_kyc ? kycStats.total_unapproved_kyc : '-'}</label>
+          <label>Unsubmitted Kyc: {kycStats.total_unsubmitted_kyc ? kycStats.total_unsubmitted_kyc : '-'}</label>
+        </div>
       </div>
       <div className="p-5 flex justify-between">
-        <div className="relative flex gap-2">
+        <div className="flex gap-2">
+  <div className="relative w-[163px]"> 
+    <div
+      onClick={() => setIsApprovedPopUp(!isApprovedPopUP)}
+      className={`${isApprovedPopUP ? 'h-[200px]' : 'h-[43px]'} absolute top-0 left-0 w-[163px] bg-white text-[#4A5568] border px-4 py-3 rounded shadow`}
+    >
+      <div className="flex justify-between items-center">
+        {is_approved ? <label className="text-red-400">Verified</label> : is_approved === '' ? <label>KYC Status</label> : <label className="text-red-400">Unverified</label>}
+        {is_approved ? (
+          <Image src="/dropdown.svg" alt="" width={13} height={13} className={`${isApprovedPopUP ? 'ml-5' : 'ml-5'}`} />
+        ) : (
+          <div>
+            <Image src="/dropdown.svg" alt="" width={13} height={13} className={`${isApprovedPopUP ? 'rotate-180' : ''}`} />
+          </div>
+        )}
+      </div>
+      {isApprovedPopUP && (
+        <div>
           <div
-            onClick={() => setIsApprovedPopUp(!isApprovedPopUP)}
-            className={`${isApprovedPopUP ? 'h-[200px]' : 'h-[50px]'} absolute top-0 left-0 w-[163px] bg-white text-[#4A5568] border px-4 py-3 rounded shadow`}
+            onClick={() => set_is_approved('')}
+            className="mt-4 py-1 px-2 shadow bg-gray-100 rounded text-blue-500 hover:text-[#3462B5] cursor-pointer"
           >
-            <div className="flex gap-7">
-             {is_approved ? <label className="text-red-400">Verified</label> : is_approved === '' ? <label>KYC Status</label> : <label className="text-red-400">Unverified</label>}
-              {is_approved ? (
-                  <Image src="/dropdown.svg" alt="" width={13} height={13} className={`${isApprovedPopUP ? 'ml-5' : 'ml-5'}`} />
-              ) : (
-                <div className="mt-2">
-                  <Image src="/dropdown.svg" alt="" width={13} height={13} className={`${isApprovedPopUP ? 'rotate-180' : ''}`} />
-                </div>
-              )}
+            All
+          </div>
+          <div
+            onClick={() => set_is_approved(true)}
+            className="mt-4 py-1 px-2 shadow bg-gray-100 rounded text-blue-500 hover:text-[#3462B5] cursor-pointer"
+          >
+            Verified
+          </div>
+          <div
+            onClick={() => set_is_approved(false)}
+            className="mt-4 py-1 px-2 shadow bg-gray-100 rounded text-blue-500 hover:text-[#3462B5] cursor-pointer"
+          >
+            Unverified
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+     <div className="relative flex gap-2 cursor-pointer">
+            <div onClick={() => setShowFilter(!showFilter)} className="flex justify-center items-center gap-2 text-[#4A5568] border px-4 py-2 rounded shadow">
+              <div className="">
+                <Image src="/filter.svg" alt="" width={15} height={13} />
+              </div>
+              <label className="text-[#4A5568] cursor-pointer">{filter === 'corporation' ? <label className="text-red-400">Corporation</label> : filter === 'organization' ? <label className="text-red-400">Organization</label> : 'Filter'}</label>
             </div>
-            {isApprovedPopUP && (
-              <div>
-                <div
-                  onClick={() => set_is_approved('')}
-                  className="mt-4 py-1 px-2 shadow bg-gray-100 rounded text-blue-500 hover:text-[#3462B5] cursor-pointer"
-                >
-                All
-                </div>
-                <div
-                  onClick={() => set_is_approved(true)}
-                  className="mt-4 py-1 px-2 shadow bg-gray-100 rounded text-blue-500 hover:text-[#3462B5] cursor-pointer"
-                >
-                  Verified
-                </div>
-                  <div
-                  onClick={() => set_is_approved(false)}
-                  className="mt-4 py-1 px-2 shadow bg-gray-100 rounded text-blue-500 hover:text-[#3462B5] cursor-pointer"
-                >
-                Unverified
-                </div>
+
+            {showFilter && (
+              <div onClick={() => setShowFilter(!showFilter)} className="absolute top-12 right-4 w-32 text-black bg-gray-100 rounded p-4 shadow">
+                <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick={() => { setFilter(""); set_is_kyc_submitted(''); }}>All</p>
+                <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick={() => { setFilter("corporation"); set_is_kyc_submitted(''); }}>Corporation</p>
+                <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick={() => { setFilter("organization"); set_is_kyc_submitted(''); }}>Organization</p>
               </div>
             )}
           </div>
-        </div>
+</div>
+
 
         <div className="flex gap-2">
           <Link href="/dashboard/unverified_company" className="flex gap-2 text-[#4A5568] border px-4 py-2 rounded shadow cursor-pointer">
@@ -113,22 +149,7 @@ export default function Home() {
             <label className="text-[#4A5568]">Verified Company</label>
           </Link>
 
-          <div className="relative flex gap-2 cursor-pointer">
-            <div onClick={() => setShowFilter(!showFilter)} className="flex gap-2 text-[#4A5568] border px-4 py-2 rounded shadow">
-              <div className="mt-1.5">
-                <Image src="/filter.svg" alt="" width={15} height={13} />
-              </div>
-              <label className="text-[#4A5568] cursor-pointer">Filter</label>
-            </div>
-
-            {showFilter && (
-              <div onClick={() => setShowFilter(!showFilter)} className="absolute top-12 right-4 w-32 text-black bg-gray-100 rounded p-4 shadow">
-                <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick={() => { setFilter(""); set_is_kyc_submitted(''); }}>All</p>
-                <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick={() => { setFilter("corporation"); set_is_kyc_submitted(''); }}>Corporation</p>
-                <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick={() => { setFilter("organization"); set_is_kyc_submitted(''); }}>Organization</p>
-              </div>
-            )}
-          </div>
+       
 
           <Link className="cursor-pointer" href="/form">
             <button className="flex gap-2 bg-[#3462B5] px-4 py-2 rounded shadow">
@@ -220,9 +241,9 @@ export default function Home() {
 
                       <td className="text-[#4A5568] border py-2 px-16">
                         {val.is_approved ? (
-                          <Image src="/statusTrue.svg" alt="" height={19} width={19} />
+                          <Image src="/statusTrue.svg" alt="" height={20} width={20} />
                         ) : (
-                          <Image src="/statusFalse.svg" alt="" height={19} width={19} />
+                          <Image src="/statusFalse.svg" alt="" height={20} width={20} />
                         )}
                       </td>
                       <td className="text-[#4A5568] text-left border py-2 px-4"><Link href={`/dashboard/company_details/${val.id}`} className="flex justify-center">

@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
+import FileViewer from '@/app/others/fileViewer/page';
 
 const CompanyDetails = () => {
   const { id } = useParams();
@@ -22,7 +23,6 @@ const CompanyDetails = () => {
       try {
         const response = await axiosInstance.get(`company/detail/${id}/`);
         setCompanyData(response.data);
-        console.log(response.data);
         setCheckISApprove(response.data.is_approved)
         setKycSubmitted(response.data.is_kyc_submitted)
       } catch (err) {
@@ -194,6 +194,7 @@ const CompanyDetails = () => {
                 View Certificate
               </a>
             </div>
+            {/* <FileViewer companyData={companyData} /> */}
           </div>
         ) : (
           <p className="text-center text-gray-600">No company data available</p>

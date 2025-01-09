@@ -25,13 +25,13 @@ const handlePageChange = (page) => {
 
   useEffect(() => {
     getUser();
-  }, [perPage, search, page]);
+  }, [perPage, search, page, filter]);
 
   const getUser = async () => {
     setLoading(true);  
     //company/list/?entity_type=adf&company_type=df&is_approved=false&is_kyc_submitted=true&search=df&page=2&page_size=12
     try {
-      const response = await axiosInstance.get(`company/list/?is_approved=${is_approved}&is_kyc_submitted=${is_kyc_submitted}&search=${search}&page=${page}&page_size=${perPage}`);
+      const response = await axiosInstance.get(`company/list/?company_type=${filter}&is_approved=${is_approved}&is_kyc_submitted=${is_kyc_submitted}&search=${search}&page=${page}&page_size=${perPage}`);
       setUser(response.data.results);
       setCurrentPage(response.data.current_page)
       let total = Math.floor(response.data.count / perPage)
@@ -69,26 +69,17 @@ const handlePageChange = (page) => {
         <label className="text-[#1E1E1E] text-xl mx-4 mt-1 font-bold">Unverified Company</label>
       </div>
       <div className="p-5 flex justify-between">
-        <div className="flex gap-2">
-
-          <div className="flex gap-3 text-[#4A5568] border px-4 py-2 rounded shadow">
-            <label>Created At</label>
-            <div className="mt-2">
-              <Image src='/dropdown.svg' alt='' width={13} height={13} />
-            </div>
-          </div>
-
-       </div>
         <div className="relative flex gap-2 cursor-pointer">
           <div onClick = {() => setShowFilter(!showFilter)} className="flex gap-2 text-[#4A5568] border px-4 py-2 rounded shadow ">
             <div className="mt-1.5">
               <Image src='/filter.svg' alt='' width={15} height={13} />
             </div>
-            <label className="text-[#4A5568] cursor-pointer">Filter </label>
+             <label className="text-[#4A5568] cursor-pointer">{filter === 'corporation' ? <label className="text-red-400">Corporation</label> : filter === 'organization' ? <label className="text-red-400">Organization</label> : 'Filter'}</label>
           </div>
           {showFilter && 
-          <div onClick = {() => setShowFilter(!showFilter)} className="absolute top-12 right-4 w-32 text-black bg-gray-50 rounded p-4 shadow">
-            <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick = {() => setFilter("Incorporation")}>Corporation</p>
+          <div onClick = {() => setShowFilter(!showFilter)} className="absolute top-11 w-32 text-black bg-gray-50 rounded p-4 shadow">
+            <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick = {() => setFilter("")}>All</p>
+            <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick = {() => setFilter("corporation")}>Corporation</p>
            <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick = {() => setFilter('organization')}>Organization</p>
           </div> }
         </div>

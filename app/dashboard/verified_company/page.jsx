@@ -31,7 +31,6 @@ const handlePageChange = (page) => {
 
     try {
       const response = await axiosInstance.get(`company/list/?company_type=${filter}&is_approved=${'true'}&is_kyc_submitted=${'true'}&search=${search}&page=${page}&page_size=${perPage}`);
-      console.log(response.data)
       setUser(response.data.results);
       setCurrentPage(response.data.current_page)
       setTotalData(response.data.count)
@@ -71,14 +70,13 @@ const handlePageChange = (page) => {
         <label className="text-[#1E1E1E] text-xl mx-4 mt-1 font-bold">Verified Company</label>
       </div>
       <div className="p-5 flex justify-between">
-        <div className="flex gap-2">
-       </div>
+      
         <div className="relative flex gap-2 cursor-pointer">
           <div onClick = {() => setShowFilter(!showFilter)} className="flex gap-2 text-[#4A5568] border px-4 py-2 rounded shadow ">
             <div className="mt-1.5">
               <Image src='/filter.svg' alt='' width={15} height={13} />
             </div>
-            <label className="text-[#4A5568] cursor-pointer">Filter </label>
+            <label className="text-[#4A5568] cursor-pointer">{filter === 'corporation' ? <label className="text-red-400">Corporation</label> : filter === 'organization' ? <label className="text-red-400">Organization</label> : 'Filter'}</label>
           </div>
           {showFilter && 
           <div onClick = {() => setShowFilter(!showFilter)} className="absolute top-12 right-4 w-32 text-black bg-gray-100 rounded p-4 shadow">
@@ -121,7 +119,6 @@ const handlePageChange = (page) => {
               </div>
             </div>
           </div>
-            {console.log(totalData)}
         
           {loading ? (
             <div className="flex justify-center items-center py-10">
