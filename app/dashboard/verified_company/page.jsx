@@ -136,8 +136,8 @@ const handlePageChange = (page) => {
                     <th className="text-[#191D2380] text-left border py-2 px-4">INCORPORATION NUMBER</th>
                     <th className="text-[#191D2380] text-left border py-2 px-4">ENTITY TYPE</th>
                     <th className="text-[#191D2380] text-left border py-2 px-4">CREATED AT</th>
-                    <th className="text-[#191D2380] text-left border py-2 px-4">KYC APPROVED</th>
-                    <th className="text-[#191D2380] text-left border py-2 px-4">KYC UPDATED</th>
+                    <th className="text-[#191D2380] text-left border py-2 px-4">KYC SUBMITTED</th>
+                    <th className="text-[#191D2380] text-left border py-2 px-4">KYC VERIFIED</th>
                     <th className="text-[#191D2380] text-center border py-2 px-4">OPERATION</th>
                   </tr>
                 </thead>

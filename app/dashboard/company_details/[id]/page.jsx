@@ -294,7 +294,6 @@ const CompanyDetails = () => {
               {!kycSubmitted ? <div className=' py-3 px-4 bg-red-100 text-red-400 rounded'>The company KYC has not been submitted yet. Kindly assist the customer in completing the company KYC submission.</div> : <div></div>}
         </div>
         
-
         {
           !kycSubmitted || checkIsApproved ? (
             <Link href="/dashboard">

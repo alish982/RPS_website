@@ -19,6 +19,7 @@ export default function Home() {
   const [showFilter, setShowFilter] = useState(false);
   const [isApprovedPopUP, setIsApprovedPopUp] = useState(false);
   const [kycStats, setKycStats] = useState([])
+  const [kycTotalStatus, setTotalStatus] = useState(0)
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -48,30 +49,82 @@ export default function Home() {
     }
   };
 
-    const getDataForDashboard = async() => {
+    const getDataForDashboard = async () => {
           try {
       const response = await axiosInstance.get(
         `company/dashboard/kyc-stats`
       );
       setKycStats(response.data.data)
       console.log(response.data.data)
+      setTotalStatus(response.data.data.total_approved_kyc + response.data.data.total_unapproved_kyc)
     } catch (error) {
       console.error('Error', error);
     } 
     }
-    
+
   return (
     <div className="pl-[70px] pr-4 h-screen w-screen bg-white">
-      <div className="border p-5 flex justify-between">
-        <label className="text-[#1E1E1E] text-xl mx-2 font-bold">Company</label>
-        <div className="text-black flex gap-5 bg-green-200 px-4 py-1 rounded font-bold ">
-          <label>Verified Kyc: {kycStats.total_approved_kyc ? kycStats.total_approved_kyc : '-'}</label>
-          <label>Unverified Kyc: {kycStats.total_unapproved_kyc ? kycStats.total_unapproved_kyc : '-'}</label>
-          <label>Unsubmitted Kyc: {kycStats.total_unsubmitted_kyc ? kycStats.total_unsubmitted_kyc : '-'}</label>
+      <div>
+
+      </div>
+      <div className="border p-5">
+          <div className="text-[#1E1E1E] text-xl mb-4 font-bold">Company</div>
+          <div className="text-black flex gap-5  px-4 py-1 rounded font-bold ">
+            <div className="w-[250px] h-[100px] bg-gradient-to-r from-indigo-500 border border-red-200 rounded-lg">
+              <div className="p-4 mx-1">
+                <label className="text-[16px] text-white">Verified Kyc: </label> 
+                <div className="text-[40px] text-white">{kycStats.total_approved_kyc ? kycStats.total_approved_kyc : '-'}</div>
+              </div>
+            </div>
+            <div className="w-[250px] h-[100px] bg-purple-300 rounded-lg">
+              <div className="p-4 mx-1">
+                <label className="text-[16px] text-white">Unverified Kyc: </label>
+                <div className="text-[40px] text-white">{kycStats.total_unapproved_kyc ? kycStats.total_unapproved_kyc : '-'}</div>
+              </div>
+            </div>
+            <div className="w-[250px] h-[100px] bg-orange-300 rounded-lg">
+              <div className="p-4 mx-1">
+                <label className="text-[16px] text-white">Unsubmitted Kyc: </label>
+                <div className="text-[40px] text-white">{kycStats.total_unsubmitted_kyc ? kycStats.total_unsubmitted_kyc : '-'}</div>
+              </div>
+            </div>
+            <div className="w-[250px] h-[100px] bg-red-300 rounded-lg">
+              <div className="p-4 mx-1">
+                <label className="text-[16px] text-white">Kyc To Be Approved: </label>
+                <div className="text-[40px] text-white">{kycStats.total_kyc_to_be_approved ? kycStats.total_kyc_to_be_approved : '-'}</div>
+              </div>
+            </div>
+            <div className="w-[250px] h-[100px] bg-pink-300 rounded-lg">
+            <div>
+              <div className="p-4 mx-1">
+                <label className="text-[16px] text-white">Total Kyc Submitted: </label>
+                <div className="text-[40px] text-white">{kycTotalStatus ? kycTotalStatus : '-'}
+              </div>
+            </div>
+          </div>
+</div>
+
+
         </div>
       </div>
       <div className="p-5 flex justify-between">
         <div className="flex gap-2">
+               <div className="relative flex gap-2 cursor-pointer">
+            <div onClick={() => setShowFilter(!showFilter)} className="flex justify-center items-center gap-2 text-[#4A5568] border px-4 py-2 rounded shadow">
+              <div className="">
+                <Image src="/filter.svg" alt="" width={15} height={13} />
+              </div>
+              <label className="text-[#4A5568] cursor-pointer">{filter === 'corporation' ? <label className="text-red-400">Corporation</label> : filter === 'organization' ? <label className="text-red-400">Organization</label> : 'Filter'}</label>
+            </div>
+
+            {showFilter && (
+              <div onClick={() => setShowFilter(!showFilter)} className="absolute top-12 right-4 w-32 text-black bg-gray-100 rounded p-4 shadow">
+                <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick={() => { setFilter(""); set_is_kyc_submitted(''); }}>All</p>
+                <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick={() => { setFilter("corporation"); set_is_kyc_submitted(''); }}>Corporation</p>
+                <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick={() => { setFilter("organization"); set_is_kyc_submitted(''); }}>Organization</p>
+              </div>
+            )}
+          </div>
   <div className="relative w-[163px]"> 
     <div
       onClick={() => setIsApprovedPopUp(!isApprovedPopUP)}
@@ -111,22 +164,6 @@ export default function Home() {
       )}
     </div>
   </div>
-     <div className="relative flex gap-2 cursor-pointer">
-            <div onClick={() => setShowFilter(!showFilter)} className="flex justify-center items-center gap-2 text-[#4A5568] border px-4 py-2 rounded shadow">
-              <div className="">
-                <Image src="/filter.svg" alt="" width={15} height={13} />
-              </div>
-              <label className="text-[#4A5568] cursor-pointer">{filter === 'corporation' ? <label className="text-red-400">Corporation</label> : filter === 'organization' ? <label className="text-red-400">Organization</label> : 'Filter'}</label>
-            </div>
-
-            {showFilter && (
-              <div onClick={() => setShowFilter(!showFilter)} className="absolute top-12 right-4 w-32 text-black bg-gray-100 rounded p-4 shadow">
-                <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick={() => { setFilter(""); set_is_kyc_submitted(''); }}>All</p>
-                <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick={() => { setFilter("corporation"); set_is_kyc_submitted(''); }}>Corporation</p>
-                <p className="py-1 text-[14px] hover:text-[#3462B5]" onClick={() => { setFilter("organization"); set_is_kyc_submitted(''); }}>Organization</p>
-              </div>
-            )}
-          </div>
 </div>
 
 
