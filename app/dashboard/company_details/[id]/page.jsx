@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
-import FileViewer from '@/app/others/fileViewer/page';
+import { usePreviousUrl } from '@/app/others/prevURL/page';
 
 const CompanyDetails = () => {
   const { id } = useParams();
@@ -17,6 +17,8 @@ const CompanyDetails = () => {
   const [handleConfirm, setHandleConfirm] = useState(false);
   const [checkIsApproved, setCheckISApprove] = useState('')
   const [kycSubmitted, setKycSubmitted] = useState('')
+
+  const { previousUrl } = usePreviousUrl();
 
   useEffect(() => {
     const fetchCompanyDetails = async () => {
@@ -75,7 +77,7 @@ const CompanyDetails = () => {
       <div className="bg-white rounded-lg p-8">
         <div className="flex mb-2">
           <div className="hover:text-blue-400">
-            <Link href="/dashboard">
+            <Link href = {`${previousUrl}`}>
               <button className="h-[35px] w-[35px] rounded-md border border-slate-300 hover:border-[#309fed] text-black hover:text-[#309fed] p-1">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Layout from "./barLayout";
 import { Toaster } from 'react-hot-toast'
+import { PreviousUrlProvider } from "./others/prevURL/page";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,6 +21,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
+    <PreviousUrlProvider>
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -31,5 +33,6 @@ export default function RootLayout({ children }) {
         </main>
       </body>
     </html>
+    </PreviousUrlProvider>
   );
 }

@@ -55,7 +55,6 @@ export default function Home() {
         `company/dashboard/kyc-stats`
       );
       setKycStats(response.data.data)
-      console.log(response.data.data)
       setTotalStatus(response.data.data.total_approved_kyc + response.data.data.total_unapproved_kyc)
     } catch (error) {
       console.error('Error', error);
@@ -65,7 +64,6 @@ export default function Home() {
   return (
     <div className="pl-[70px] pr-4 h-screen w-screen bg-white">
       <div>
-
       </div>
       <div className="border p-5">
           <div className="text-[#1E1E1E] text-xl mb-4 font-bold">Company</div>

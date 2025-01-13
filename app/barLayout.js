@@ -6,7 +6,7 @@ import Sidebar from './components/Sidebar';
 const Layout = ({ children }) => {
   const pathname = usePathname();
 
-  const hideSidebarNavbar = pathname === '/' || pathname === '/login' ;
+  const hideSidebarNavbar = pathname === '/auth/login' || pathname === '/login' ;
 
   return (
     <div className="layout">

@@ -16,7 +16,7 @@ export default function Home() {
   const [showFilter, setShowFilter] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState()
-    const [filter, setFilter] = useState('')
+  const [filter, setFilter] = useState('')
 
 const handlePageChange = (page) => {
         setCurrentPage(page);
