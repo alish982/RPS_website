@@ -296,22 +296,31 @@ const CompanyDetails = () => {
               {!kycSubmitted ? <div className=' py-3 px-4 bg-red-100 text-red-400 rounded'>The company KYC has not been submitted yet. Kindly assist the customer in completing the company KYC submission.</div> : <div></div>}
         </div>
         
-        {
-          !kycSubmitted || checkIsApproved ? (
-            <Link href="/dashboard">
-              <button className="text-white bg-[#3462B5] py-4 text-lg font-bold px-10 my-5 rounded-lg">
-                Back
-              </button>
-            </Link>
-          ) : (
-            <button
-              onClick={() => setHandleConfirm((prev) => !prev)}
-              className="text-white bg-green-500 py-4 text-lg font-bold px-10 my-5 rounded-lg"
-            >
-              Approve
-            </button>
-          )
-        }
+{
+  !kycSubmitted || checkIsApproved ? (
+   <Link href = {`${previousUrl}`}>
+      <button className="text-white bg-[#3462B5] py-4 text-lg font-bold px-10 my-5 rounded-lg">
+        Back
+      </button>
+    </Link>
+  ) : (
+    <div className="flex space-x-4">
+           <Link href = {`${previousUrl}`}>
+        <button className="text-white bg-[#3462B5] py-4 text-lg font-bold px-10 my-5 rounded-lg">
+          Back
+        </button>
+      </Link>
+      <button
+        onClick={() => setHandleConfirm((prev) => !prev)}
+        className="text-white bg-green-500 py-4 text-lg font-bold px-10 my-5 rounded-lg"
+      >
+        Approve
+      </button>
+   
+    </div>
+  )
+}
+
       </div>
 
       {handleConfirm ? (

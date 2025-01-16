@@ -162,9 +162,9 @@ const handlePageChange = (page) => {
 
                       <td className="text-[#4A5568] border py-2 px-16">
                         {val.is_approved ? (
-                          <Image src="/statusTrue.svg" alt="" height={15} width={15} />
+                          <Image src="/statusTrue.svg" alt="" height={20} width={20} />
                         ) : (
-                          <Image src="/statusFalse.svg" alt="" height={15} width={15} />
+                          <Image src="/statusFalse.svg" alt="" height={20} width={20} />
                         )}
                         </td>
                         <td className="text-[#4A5568] border py-2">

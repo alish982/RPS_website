@@ -29,7 +29,6 @@ const handlePageChange = (page) => {
 
   const getUser = async () => {
     setLoading(true);  
-    //company/list/?entity_type=adf&company_type=df&is_approved=false&is_kyc_submitted=true&search=df&page=2&page_size=12
     try {
       const response = await axiosInstance.get(`company/list/?company_type=${filter}&is_approved=${is_approved}&is_kyc_submitted=${is_kyc_submitted}&search=${search}&page=${page}&page_size=${perPage}`);
       setUser(response.data.results);
