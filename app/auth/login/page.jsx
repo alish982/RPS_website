@@ -54,6 +54,7 @@ export default function Login() {
   setLoading(true)
     const response = await axiosInstance.post('login/', data);
     console.log(response)
+    router.push('/dashboard');
 
     if (response.status === 200) {
       localStorage.setItem('access_token', response.data.data.access_token)
@@ -61,12 +62,9 @@ export default function Login() {
         expires: 7,  
         path: '/',   
         secure: true,
-        sameSite: 'Strict', 
+        sameSite:'None'
       });
-
-      console.log(response.status)
-
-      router.push('/dashboard');
+      
     } else {
       console.log('Error: Login failed');
     }
@@ -77,8 +75,12 @@ export default function Login() {
      if(error.status === 403 ){
       toast.error('Wrong Credentials')
     }
+     if(error.status === 404 ){
+      toast.error('Url Not Found')
+    }
   }
   finally {
+    console.log(Cookies.get('access_token'))
     setLoading(false)
   }
 }
